@@ -1,0 +1,74 @@
+# Ticket #023: Wallet Aggregate
+
+**Phase:** 2c - Economy Context
+**Context:** Economy
+**Priority:** High
+**Depends On:** #005
+**Estimated Time:** 3h
+**Agent:** Economy Agent
+**Status:** ⏳ Pending
+
+---
+
+## 📚 Specs Reference
+
+- **Primary:** `../architecture/03-Technical-Architecture/IMPLEMENTATION-SPECS.md`
+- **Patterns:** `application-architecture.md`
+- **Reference:** `IMPLEMENTATION-SPECS.md (Currency formulas)`
+
+---
+
+## 🎯 Objectives
+
+Implement Wallet aggregate with currency management.
+
+---
+
+## ✅ Deliverables
+
+- [ ] Wallet aggregate
+- [ ] Currency value object
+- [ ] Credit/debit methods
+- [ ] CurrencyEarnedEvent
+- [ ] CurrencySpentEvent
+- [ ] Unit tests
+
+---
+
+## 📁 Files to Create/Modify
+
+```
+apps/backend/src/modules/economy/domain/aggregates/wallet.aggregate.ts
+apps/backend/src/modules/economy/domain/value-objects/currency.vo.ts
+apps/backend/src/modules/economy/domain/events/*.event.ts
+apps/backend/src/modules/economy/domain/aggregates/__tests__/wallet.spec.ts
+```
+
+---
+
+## 🧪 Acceptance Criteria
+
+- [ ] All deliverables completed
+- [ ] Tests pass (>90% coverage for domain layer)
+- [ ] Follows Clean Architecture patterns
+- [ ] Implements all specs from IMPLEMENTATION-SPECS.md
+- [ ] No TypeScript errors
+- [ ] Properly emits domain events
+
+---
+
+## 💡 Implementation Notes
+
+Refer to IMPLEMENTATION-SPECS.md for:
+- Constants and formulas
+- Domain event signatures
+- Validation rules
+- Business logic specifications
+
+---
+
+## 🔗 Related Documentation
+
+- Business Rules: `business-rules-implementation.md`
+- Events: `event-architecture.md`
+- Validation: `validation-and-security.md`

@@ -1,0 +1,452 @@
+// ==============================================
+// PRISMA SCHEMA - PASTRYQUIZ
+// ==============================================
+// Database: PostgreSQL 15+
+// ORM: Prisma
+// Architecture: Clean Architecture + DDD
+// ==============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==============================================
+// IDENTITY CONTEXT
+// ==============================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // bcrypt hash
+  username  String   @unique
+  avatarUrl String?  @map("avatar_url")
+  role      UserRole @default(PLAYER)
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  refreshTokens    RefreshToken[]
+  quizSessions     QuizSession[]
+  playerProgress   PlayerProgress?
+  wallet           Wallet?
+  lives            Lives?
+  transactions     Transaction[]
+  playerRanking    PlayerRanking?
+  createdQuestions Question[]      @relation("QuestionCreator")
+  
+  @@map("users")
+}
+
+enum UserRole {
+  PLAYER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("refresh_tokens")
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ==============================================
+// QUIZ CONTEXT
+// ==============================================
+
+model Category {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String
+  icon        String
+  slug        String  @unique
+  
+  questions    Question[]
+  quizSessions QuizSession[]
+  
+  @@map("categories")
+}
+
+model Difficulty {
+  id              String @id @default(uuid())
+  level           String @unique // "apprenti", "commis", "chef", "mof"
+  name            String
+  timePerQuestion Int    @map("time_per_question") // seconds
+  xpMultiplier    Float  @map("xp_multiplier")
+  
+  questions    Question[]
+  quizSessions QuizSession[]
+  
+  @@map("difficulties")
+}
+
+model Question {
+  id          String         @id @default(uuid())
+  text        String
+  explanation String
+  imageUrl    String?        @map("image_url")
+  status      QuestionStatus @default(DRAFT)
+  
+  categoryId   String @map("category_id")
+  difficultyId String @map("difficulty_id")
+  createdById  String @map("created_by_id")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  category  Category   @relation(fields: [categoryId], references: [id])
+  difficulty Difficulty @relation(fields: [difficultyId], references: [id])
+  createdBy User       @relation("QuestionCreator", fields: [createdById], references: [id])
+  
+  answers        Answer[]
+  sessionAnswers SessionAnswer[]
+  
+  @@map("questions")
+  @@index([categoryId])
+  @@index([difficultyId])
+  @@index([status])
+}
+
+enum QuestionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Answer {
+  id         String  @id @default(uuid())
+  text       String
+  isCorrect  Boolean @map("is_correct")
+  questionId String  @map("question_id")
+  
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  @@map("answers")
+  @@index([questionId])
+}
+
+model QuizSession {
+  id     String             @id @default(uuid())
+  userId String             @map("user_id")
+  status QuizSessionStatus  @default(CREATED)
+  score  Int                @default(0)
+  
+  categoryId   String @map("category_id")
+  difficultyId String @map("difficulty_id")
+  
+  startedAt   DateTime  @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  expiresAt   DateTime  @map("expires_at") // 10 minutes after start
+  
+  // Relations
+  user       User           @relation(fields: [userId], references: [id])
+  category   Category       @relation(fields: [categoryId], references: [id])
+  difficulty Difficulty     @relation(fields: [difficultyId], references: [id])
+  
+  answers SessionAnswer[]
+  
+  @@map("quiz_sessions")
+  @@index([userId])
+  @@index([status])
+  @@index([completedAt])
+}
+
+enum QuizSessionStatus {
+  CREATED
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+model SessionAnswer {
+  id          String  @id @default(uuid())
+  sessionId   String  @map("session_id")
+  questionId  String  @map("question_id")
+  answerId    String  @map("answer_id")
+  isCorrect   Boolean @map("is_correct")
+  timeSpent   Int     @map("time_spent") // milliseconds
+  pointsEarned Int    @map("points_earned")
+  timeBonus   Int     @map("time_bonus")
+  
+  answeredAt DateTime @default(now()) @map("answered_at")
+  
+  // Relations
+  session  QuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id])
+  
+  @@map("session_answers")
+  @@index([sessionId])
+  @@unique([sessionId, questionId]) // One answer per question per session
+}
+
+// ==============================================
+// GAMIFICATION CONTEXT
+// ==============================================
+
+model PlayerProgress {
+  id            String   @id @default(uuid())
+  userId        String   @unique @map("user_id")
+  currentXP     Int      @default(0) @map("current_xp")
+  currentLevel  Int      @default(1) @map("current_level")
+  currentStreak Int      @default(0) @map("current_streak")
+  longestStreak Int      @default(0) @map("longest_streak")
+  lastPlayedAt  DateTime @default(now()) @map("last_played_at")
+  
+  // Statistics
+  totalQuizzes    Int   @default(0) @map("total_quizzes")
+  perfectQuizzes  Int   @default(0) @map("perfect_quizzes")
+  totalCorrect    Int   @default(0) @map("total_correct")
+  totalAnswers    Int   @default(0) @map("total_answers")
+  totalPlayTime   Int   @default(0) @map("total_play_time") // minutes
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unlockedBadges    PlayerBadge[]
+  categoryStats     CategoryStat[]
+  streakProtections StreakProtection[]
+  
+  @@map("player_progress")
+  @@index([currentLevel])
+  @@index([currentStreak])
+}
+
+model Badge {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String
+  imageUrl    String      @map("image_url")
+  rarity      BadgeRarity
+  condition   String      // Human-readable condition
+  coinReward  Int         @map("coin_reward")
+  
+  // Condition parameters (JSON for flexibility)
+  conditionData Json @map("condition_data")
+  // Example: { "type": "perfect_quizzes", "count": 10 }
+  // Example: { "type": "streak", "days": 30 }
+  // Example: { "type": "category_answers", "category": "chocolat", "count": 50 }
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  playerBadges PlayerBadge[]
+  
+  @@map("badges")
+  @@index([rarity])
+}
+
+enum BadgeRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model PlayerBadge {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  badgeId    String   @map("badge_id")
+  unlockedAt DateTime @default(now()) @map("unlocked_at")
+  
+  // Relations
+  progress PlayerProgress @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  badge    Badge          @relation(fields: [badgeId], references: [id])
+  
+  @@map("player_badges")
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+}
+
+model CategoryStat {
+  id               String @id @default(uuid())
+  userId           String @map("user_id")
+  categoryName     String @map("category_name")
+  quizzesPlayed    Int    @default(0) @map("quizzes_played")
+  correctAnswers   Int    @default(0) @map("correct_answers")
+  totalAnswers     Int    @default(0) @map("total_answers")
+  
+  // Relations
+  progress PlayerProgress @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  
+  @@map("category_stats")
+  @@unique([userId, categoryName])
+  @@index([userId])
+}
+
+model StreakProtection {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  progress PlayerProgress @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  
+  @@map("streak_protections")
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ==============================================
+// LEADERBOARD CONTEXT
+// ==============================================
+
+model PlayerRanking {
+  id           String   @id @default(uuid())
+  userId       String   @unique @map("user_id")
+  globalScore  Int      @default(0) @map("global_score")
+  weeklyScore  Int      @default(0) @map("weekly_score")
+  globalRank   Int?     @map("global_rank")
+  weeklyRank   Int?     @map("weekly_rank")
+  
+  lastUpdated DateTime @default(now()) @map("last_updated")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("player_rankings")
+  @@index([globalScore])
+  @@index([weeklyScore])
+  @@index([globalRank])
+  @@index([weeklyRank])
+}
+
+// ==============================================
+// ECONOMY CONTEXT
+// ==============================================
+
+model Wallet {
+  id              String @id @default(uuid())
+  userId          String @unique @map("user_id")
+  balance         Int    @default(0)
+  lifetimeEarned  Int    @default(0) @map("lifetime_earned")
+  lifetimeSpent   Int    @default(0) @map("lifetime_spent")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("wallets")
+  @@index([balance])
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  userId      String          @map("user_id")
+  type        TransactionType
+  amount      Int
+  source      String          // "quiz_completed", "level_up", "powerup_purchase", etc.
+  description String
+  balanceAfter Int            @map("balance_after")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("transactions")
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+enum TransactionType {
+  EARNED
+  SPENT
+}
+
+model ShopItem {
+  id          String       @id @default(uuid())
+  type        ShopItemType
+  name        String
+  description String
+  price       Int
+  imageUrl    String       @map("image_url")
+  available   Boolean      @default(true)
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@map("shop_items")
+  @@index([type])
+  @@index([available])
+}
+
+enum ShopItemType {
+  POWERUP_FIFTY_FIFTY
+  POWERUP_EXTRA_TIME
+  POWERUP_SKIP
+  LIFE
+  STREAK_FREEZE
+}
+
+model Lives {
+  id            String    @id @default(uuid())
+  userId        String    @unique @map("user_id")
+  currentLives  Int       @default(5) @map("current_lives")
+  maxLives      Int       @default(5) @map("max_lives")
+  lastRegenAt   DateTime  @default(now()) @map("last_regen_at")
+  
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("lives")
+  @@index([currentLives])
+}
+
+// ==============================================
+// EVENTS (Event Sourcing - Optional)
+// ==============================================
+
+model DomainEvent {
+  id           String   @id @default(uuid())
+  aggregateId  String   @map("aggregate_id")  // userId, sessionId, etc.
+  aggregateType String  @map("aggregate_type") // "User", "QuizSession", etc.
+  eventType    String   @map("event_type")     // "QuizCompleted", "LevelUp", etc.
+  eventData    Json     @map("event_data")     // Event payload
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("domain_events")
+  @@index([aggregateId])
+  @@index([aggregateType])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+// ==============================================
+// UTILITIES
+// ==============================================
+
+// For tracking cron jobs and background tasks
+model CronJob {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  lastRunAt   DateTime @map("last_run_at")
+  nextRunAt   DateTime @map("next_run_at")
+  status      String   @default("pending")
+  
+  @@map("cron_jobs")
+  @@index([nextRunAt])
+}
