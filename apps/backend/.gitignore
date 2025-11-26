@@ -1,0 +1,22 @@
+# compiled output
+/node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# IDEs
+.idea
+.vscode
+*.swp
+*.swo
+
+/src/generated/prisma
