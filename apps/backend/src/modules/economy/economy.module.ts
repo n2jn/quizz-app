@@ -1,4 +1,34 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { SharedModule } from '@shared/shared.module';
+
+// Controllers
+import { EconomyController } from './presentation/controllers/economy.controller';
+
+// Command Handlers
+import { PurchaseItemHandler } from './application/commands/purchase-item.handler';
+
+// Query Handlers
+import { GetWalletHandler } from './application/queries/get-wallet.handler';
+import { GetLivesHandler } from './application/queries/get-lives.handler';
+
+// Repositories
+import { WalletRepository } from './infrastructure/repositories/wallet.repository';
+import { LivesRepository } from './infrastructure/repositories/lives.repository';
+
+const CommandHandlers = [PurchaseItemHandler];
+const QueryHandlers = [GetWalletHandler, GetLivesHandler];
+
+const Repositories = [
+  {
+    provide: 'IWalletRepository',
+    useClass: WalletRepository,
+  },
+  {
+    provide: 'ILivesRepository',
+    useClass: LivesRepository,
+  },
+];
 
 /**
  * Economy Bounded Context
@@ -14,21 +44,17 @@ import { Module } from '@nestjs/common';
  * - CoinsEarnedEvent
  * - CoinsSpentEvent
  * - LifeConsumedEvent
- * - LifeRegeneratedEvent
+ * - LifeRestoredEvent
  *
  * Domain Events Consumed:
  * - UserRegisteredEvent -> Create wallet and lives
- * - QuizStartedEvent -> Consume 1 life
- * - QuizCompletedEvent -> Award 10 coins
- * - PerfectScoreAchievedEvent -> Award 50 coins
- * - LevelUpEvent -> Award 100 coins
- * - BadgeUnlockedEvent -> Award badge reward coins
- * - StreakMilestoneEvent -> Award streak milestone coins
+ * - QuizSessionStartedEvent -> Consume 1 life
+ * - QuizSessionCompletedEvent -> Award coins based on score
  */
 @Module({
-  imports: [],
-  providers: [],
-  controllers: [],
+  imports: [CqrsModule, SharedModule],
+  controllers: [EconomyController],
+  providers: [...CommandHandlers, ...QueryHandlers, ...Repositories],
   exports: [],
 })
 export class EconomyModule {}

@@ -4,6 +4,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { SharedModule } from './shared/shared.module';
 import { IdentityModule } from './modules/identity/identity.module';
+import { QuizModule } from './modules/quiz/quiz.module';
+import { EconomyModule } from './modules/economy/economy.module';
+import { GamificationModule } from './modules/gamification/gamification.module';
+import { LeaderboardModule } from './modules/leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -38,13 +42,10 @@ import { IdentityModule } from './modules/identity/identity.module';
 
     // Bounded Context Modules
     IdentityModule,
-
-    // TODO: Implement remaining contexts
-    // QuizModule,
-    // GamificationModule,
-    // LeaderboardModule,
-    // EconomyModule,
-    // ContentModule,
+    QuizModule,
+    EconomyModule,
+    GamificationModule,
+    LeaderboardModule,
   ],
   providers: [],
 })

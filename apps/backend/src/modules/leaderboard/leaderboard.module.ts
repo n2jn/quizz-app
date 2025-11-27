@@ -1,4 +1,24 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { SharedModule } from '@shared/shared.module';
+
+// Controllers
+import { LeaderboardController } from './presentation/controllers/leaderboard.controller';
+
+// Query Handlers
+import { GetLeaderboardHandler } from './application/queries/get-leaderboard.handler';
+
+// Repositories
+import { PlayerRankingRepository } from './infrastructure/repositories/player-ranking.repository';
+
+const QueryHandlers = [GetLeaderboardHandler];
+
+const Repositories = [
+  {
+    provide: 'IPlayerRankingRepository',
+    useClass: PlayerRankingRepository,
+  },
+];
 
 /**
  * Leaderboard Bounded Context
@@ -6,19 +26,15 @@ import { Module } from '@nestjs/common';
  * Responsibilities:
  * - Global leaderboard rankings
  * - Weekly leaderboard rankings
- * - Rank calculation and caching
- * - Nearby player rankings
- *
- * Domain Events Emitted:
- * - RankingUpdatedEvent
+ * - Rank calculation
  *
  * Domain Events Consumed:
- * - QuizCompletedEvent -> Update player score and ranking
+ * - QuizSessionCompletedEvent -> Update player score and ranking
  */
 @Module({
-  imports: [],
-  providers: [],
-  controllers: [],
+  imports: [CqrsModule, SharedModule],
+  controllers: [LeaderboardController],
+  providers: [...QueryHandlers, ...Repositories],
   exports: [],
 })
 export class LeaderboardModule {}

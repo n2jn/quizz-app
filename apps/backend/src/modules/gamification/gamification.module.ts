@@ -1,31 +1,44 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { SharedModule } from '@shared/shared.module';
+
+// Controllers
+import { GamificationController } from './presentation/controllers/gamification.controller';
+
+// Query Handlers
+import { GetProgressHandler } from './application/queries/get-progress.handler';
+
+// Repositories
+import { PlayerProgressRepository } from './infrastructure/repositories/player-progress.repository';
+
+const QueryHandlers = [GetProgressHandler];
+
+const Repositories = [
+  {
+    provide: 'IPlayerProgressRepository',
+    useClass: PlayerProgressRepository,
+  },
+];
 
 /**
  * Gamification Bounded Context
  *
  * Responsibilities:
  * - Player progress tracking (XP, levels)
- * - Badge system
  * - Streak management
- * - Category statistics
- * - Achievement evaluation
+ * - Statistics tracking
  *
  * Domain Events Emitted:
- * - ExperienceGainedEvent
  * - LevelUpEvent
- * - BadgeUnlockedEvent
- * - StreakIncrementedEvent
- * - StreakLostEvent
- * - StreakMilestoneEvent
+ * - StreakUpdatedEvent
  *
  * Domain Events Consumed:
- * - QuizCompletedEvent -> Add XP, update streak, check badges
- * - PerfectScoreAchievedEvent -> Check for perfect score badges
+ * - QuizSessionCompletedEvent -> Add XP, update stats, update streak
  */
 @Module({
-  imports: [],
-  providers: [],
-  controllers: [],
+  imports: [CqrsModule, SharedModule],
+  controllers: [GamificationController],
+  providers: [...QueryHandlers, ...Repositories],
   exports: [],
 })
 export class GamificationModule {}
