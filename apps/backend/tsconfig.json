@@ -19,10 +19,10 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@quizz-app/shared-types": ["../../../packages/shared-types/src"],
-      "@modules/*": ["modules/*"],
-      "@shared/*": ["shared/*"],
-      "@config/*": ["config/*"]
+      "@quizz-app/shared-types": ["../../packages/shared-types/src"],
+      "@modules/*": ["./modules/*"],
+      "@shared/*": ["./shared/*"],
+      "@config/*": ["./config/*"]
     }
   },
   "include": ["src/**/*"],

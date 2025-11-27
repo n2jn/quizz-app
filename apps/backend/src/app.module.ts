@@ -2,9 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
 import { SharedModule } from './shared/shared.module';
+import { IdentityModule } from './modules/identity/identity.module';
 
 @Module({
   imports: [
@@ -37,12 +36,10 @@ import { SharedModule } from './shared/shared.module';
     // Shared Infrastructure (Global)
     SharedModule,
 
-    // Existing modules (to be migrated to Clean Architecture)
-    AuthModule,
-    UsersModule,
+    // Bounded Context Modules
+    IdentityModule,
 
-    // Bounded Context Modules (to be added in next phases)
-    // IdentityModule,
+    // TODO: Implement remaining contexts
     // QuizModule,
     // GamificationModule,
     // LeaderboardModule,
