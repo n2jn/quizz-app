@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Inject, UnauthorizedException } from '@nestjs/common';
 import { LoginUserCommand } from './login-user.command';
 import { IUserRepository } from '../../domain/repositories/user.repository.interface';
 import { Email } from '../../domain/value-objects/email.vo';
@@ -22,7 +22,7 @@ export interface LoginUserResult {
 @Injectable()
 @CommandHandler(LoginUserCommand)
 export class LoginUserHandler implements ICommandHandler<LoginUserCommand, LoginUserResult> {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(@Inject('IUserRepository') private readonly userRepository: IUserRepository) {}
 
   async execute(command: LoginUserCommand): Promise<LoginUserResult> {
     const email = Email.create(command.email);

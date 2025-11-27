@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { RegisterUserCommand } from './register-user.command';
 import { IUserRepository } from '../../domain/repositories/user.repository.interface';
 import { Email } from '../../domain/value-objects/email.vo';
@@ -29,7 +29,7 @@ export interface RegisterUserResult {
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand, RegisterUserResult> {
   constructor(
-    private readonly userRepository: IUserRepository,
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
     private readonly eventBus: EventBusService,
   ) {}
 
@@ -52,7 +52,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand,
     await this.userRepository.save(user);
 
     // Publish domain events
-    await this.eventBus.publishAll(user.domainEvents);
+    await this.eventBus.publishAll([...user.domainEvents]);
     user.clearEvents();
 
     return {
