@@ -1,22 +1,375 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// PastryQuiz Prisma Schema
+// 6 Bounded Contexts: Identity, Quiz, Gamification, Leaderboard, Economy, Content
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+// ============================================
+// IDENTITY CONTEXT
+// ============================================
+
 model User {
-    id        String   @id @default(cuid())
-    email     String   @unique
-    name      String
-    password  String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  username  String   @unique @db.VarChar(20)
+  role      UserRole @default(PLAYER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  refreshTokens     RefreshToken[]
+  quizSessions      QuizSession[]
+  playerProgress    PlayerProgress?
+  wallet            Wallet?
+  lives             Lives?
+  transactions      Transaction[]
+  playerRanking     PlayerRanking?
+  createdQuestions  Question[]
+  playerBadges      PlayerBadge[]
+  streakProtections StreakProtection[]
+  categoryStats     CategoryStat[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  PLAYER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique @db.Text
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// ============================================
+// QUIZ CONTEXT
+// ============================================
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String     @unique @db.VarChar(100)
+  slug        String     @unique @db.VarChar(100)
+  icon        String?    @db.VarChar(50)
+  description String?    @db.Text
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  questions   Question[]
+
+  @@map("categories")
+}
+
+model Difficulty {
+  id               String        @id @default(uuid())
+  level            String        @unique @db.VarChar(20) // apprenti, commis, chef, mof
+  name             String        @db.VarChar(50)
+  timePerQuestion  Int // seconds
+  xpMultiplier     Float
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  questions        Question[]
+  quizSessions     QuizSession[]
+
+  @@map("difficulties")
+}
+
+model Question {
+  id           String         @id @default(uuid())
+  text         String         @db.Text
+  explanation  String         @db.Text
+  imageUrl     String?        @db.VarChar(255)
+  categoryId   String
+  difficultyId String
+  status       QuestionStatus @default(DRAFT)
+  createdById  String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  category       Category        @relation(fields: [categoryId], references: [id])
+  difficulty     Difficulty      @relation(fields: [difficultyId], references: [id])
+  createdBy      User            @relation(fields: [createdById], references: [id])
+  answers        Answer[]
+  sessionAnswers SessionAnswer[]
+
+  @@index([categoryId])
+  @@index([difficultyId])
+  @@index([status])
+  @@map("questions")
+}
+
+enum QuestionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Answer {
+  id         String   @id @default(uuid())
+  questionId String
+  text       String   @db.VarChar(255)
+  isCorrect  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  question       Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  sessionAnswers SessionAnswer[]
+
+  @@index([questionId])
+  @@map("answers")
+}
+
+model QuizSession {
+  id           String        @id @default(uuid())
+  userId       String
+  categoryId   String?
+  difficultyId String
+  status       SessionStatus @default(IN_PROGRESS)
+  score        Int           @default(0)
+  startedAt    DateTime      @default(now())
+  completedAt  DateTime?
+  expiresAt    DateTime
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  difficulty Difficulty      @relation(fields: [difficultyId], references: [id])
+  answers    SessionAnswer[]
+
+  @@index([userId, status])
+  @@index([expiresAt])
+  @@map("quiz_sessions")
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+model SessionAnswer {
+  id            String   @id @default(uuid())
+  sessionId     String
+  questionId    String
+  answerId      String
+  isCorrect     Boolean
+  timeSpent     Int // milliseconds
+  pointsEarned  Int
+  timeBonus     Int      @default(0)
+  answeredAt    DateTime @default(now())
+
+  session  QuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id])
+  answer   Answer      @relation(fields: [answerId], references: [id])
+
+  @@unique([sessionId, questionId])
+  @@index([sessionId])
+  @@map("session_answers")
+}
+
+// ============================================
+// GAMIFICATION CONTEXT
+// ============================================
+
+model PlayerProgress {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  currentXP       Int      @default(0)
+  currentLevel    Int      @default(1)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  totalQuizzes    Int      @default(0)
+  perfectQuizzes  Int      @default(0)
+  totalCorrect    Int      @default(0)
+  totalAnswers    Int      @default(0)
+  lastPlayedAt    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([currentLevel])
+  @@index([lastPlayedAt])
+  @@map("player_progress")
+}
+
+model Badge {
+  id            String      @id @default(uuid())
+  name          String      @unique @db.VarChar(100)
+  description   String      @db.Text
+  imageUrl      String      @db.VarChar(255)
+  rarity        BadgeRarity
+  condition     String      @db.Text // Human-readable
+  coinReward    Int         @default(0)
+  conditionData Json // Structured condition data
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  playerBadges PlayerBadge[]
+
+  @@map("badges")
+}
+
+enum BadgeRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model PlayerBadge {
+  id          String   @id @default(uuid())
+  userId      String
+  badgeId     String
+  unlockedAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@map("player_badges")
+}
+
+model CategoryStat {
+  id             String   @id @default(uuid())
+  userId         String
+  categoryName   String   @db.VarChar(100)
+  quizzesPlayed  Int      @default(0)
+  correctAnswers Int      @default(0)
+  totalAnswers   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryName])
+  @@index([userId])
+  @@map("category_stats")
+}
+
+model StreakProtection {
+  id        String   @id @default(uuid())
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("streak_protections")
+}
+
+// ============================================
+// LEADERBOARD CONTEXT
+// ============================================
+
+model PlayerRanking {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  globalScore Int      @default(0)
+  weeklyScore Int      @default(0)
+  globalRank  Int?
+  weeklyRank  Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([globalScore(sort: Desc)])
+  @@index([weeklyScore(sort: Desc)])
+  @@index([globalRank])
+  @@map("player_rankings")
+}
+
+// ============================================
+// ECONOMY CONTEXT
+// ============================================
+
+model Wallet {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  balance        Int      @default(0)
+  lifetimeEarned Int      @default(0)
+  lifetimeSpent  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id            String          @id @default(uuid())
+  userId        String
+  type          TransactionType
+  amount        Int
+  source        String          @db.VarChar(100)
+  description   String?         @db.Text
+  balanceAfter  Int
+  createdAt     DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  EARNED
+  SPENT
+}
+
+model ShopItem {
+  id          String       @id @default(uuid())
+  type        ShopItemType
+  name        String       @db.VarChar(100)
+  description String       @db.Text
+  price       Int
+  available   Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("shop_items")
+}
+
+enum ShopItemType {
+  POWERUP_FIFTY_FIFTY
+  POWERUP_EXTRA_TIME
+  POWERUP_SKIP
+  LIFE
+  STREAK_FREEZE
+}
+
+model Lives {
+  id           String    @id @default(uuid())
+  userId       String    @unique
+  currentLives Int       @default(5)
+  maxLives     Int       @default(5)
+  lastRegenAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([currentLives, lastRegenAt])
+  @@map("lives")
 }
