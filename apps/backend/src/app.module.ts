@@ -4,7 +4,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -34,8 +34,8 @@ import { PrismaModule } from './prisma/prisma.module';
       },
     ]),
 
-    // Database
-    PrismaModule,
+    // Shared Infrastructure (Global)
+    SharedModule,
 
     // Existing modules (to be migrated to Clean Architecture)
     AuthModule,
