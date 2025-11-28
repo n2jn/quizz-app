@@ -12,6 +12,10 @@ export class LevelUpEvent extends DomainEvent {
     super('player.level_up');
   }
 
+  getAggregateId(): string {
+    return this.props.userId;
+  }
+
   get userId(): string {
     return this.props.userId;
   }

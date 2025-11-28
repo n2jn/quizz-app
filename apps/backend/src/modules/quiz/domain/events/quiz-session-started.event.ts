@@ -18,6 +18,10 @@ export class QuizSessionStartedEvent extends DomainEvent {
     super('quiz.session.started');
   }
 
+  getAggregateId(): string {
+    return this.props.sessionId;
+  }
+
   get sessionId(): string {
     return this.props.sessionId;
   }

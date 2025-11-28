@@ -19,6 +19,10 @@ export class CoinsSpentEvent extends DomainEvent {
     super('coins.spent');
   }
 
+  getAggregateId(): string {
+    return this.props.userId;
+  }
+
   get userId(): string {
     return this.props.userId;
   }

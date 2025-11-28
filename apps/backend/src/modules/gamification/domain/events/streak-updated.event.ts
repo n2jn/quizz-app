@@ -12,6 +12,10 @@ export class StreakUpdatedEvent extends DomainEvent {
     super('player.streak_updated');
   }
 
+  getAggregateId(): string {
+    return this.props.userId;
+  }
+
   get userId(): string {
     return this.props.userId;
   }

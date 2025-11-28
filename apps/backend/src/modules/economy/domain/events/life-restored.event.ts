@@ -17,6 +17,10 @@ export class LifeRestoredEvent extends DomainEvent {
     super('life.restored');
   }
 
+  getAggregateId(): string {
+    return this.props.userId;
+  }
+
   get userId(): string {
     return this.props.userId;
   }

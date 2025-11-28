@@ -23,6 +23,10 @@ export class QuizSessionCompletedEvent extends DomainEvent {
     super('quiz.session.completed');
   }
 
+  getAggregateId(): string {
+    return this.props.sessionId;
+  }
+
   get sessionId(): string {
     return this.props.sessionId;
   }

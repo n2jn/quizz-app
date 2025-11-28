@@ -19,6 +19,10 @@ export class QuestionCreatedEvent extends DomainEvent {
     super('question.created');
   }
 
+  getAggregateId(): string {
+    return this.props.questionId;
+  }
+
   get questionId(): string {
     return this.props.questionId;
   }

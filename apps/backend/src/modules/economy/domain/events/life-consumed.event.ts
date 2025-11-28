@@ -16,6 +16,10 @@ export class LifeConsumedEvent extends DomainEvent {
     super('life.consumed');
   }
 
+  getAggregateId(): string {
+    return this.props.userId;
+  }
+
   get userId(): string {
     return this.props.userId;
   }

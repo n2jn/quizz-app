@@ -46,3 +46,12 @@ export class InvalidOperationException extends DomainException {
     super(`Invalid operation "${operation}": ${reason}`);
   }
 }
+
+/**
+ * Thrown when an invalid argument is provided
+ */
+export class InvalidArgumentException extends DomainException {
+  constructor(message: string) {
+    super(message);
+  }
+}
