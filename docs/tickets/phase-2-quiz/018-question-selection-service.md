@@ -6,7 +6,7 @@
 **Depends On:** #015
 **Estimated Time:** 2h
 **Agent:** Quiz Agent
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ---
 
@@ -26,10 +26,10 @@ Implement intelligent question selection algorithm.
 
 ## ✅ Deliverables
 
-- [ ] QuestionSelectionService
-- [ ] Random selection by category/difficulty
-- [ ] Avoid recent questions logic
-- [ ] Unit tests
+- [x] QuestionSelectionService
+- [x] Random selection by category/difficulty
+- [x] Avoid recent questions logic
+- [x] Unit tests
 
 ---
 
@@ -44,12 +44,12 @@ apps/backend/src/modules/quiz/domain/services/__tests__/question-selection.spec.
 
 ## 🧪 Acceptance Criteria
 
-- [ ] All deliverables completed
-- [ ] Tests pass (>90% coverage for domain layer)
-- [ ] Follows Clean Architecture patterns
-- [ ] Implements all specs from IMPLEMENTATION-SPECS.md
-- [ ] No TypeScript errors
-- [ ] Properly emits domain events
+- [x] All deliverables completed
+- [x] Tests pass (>90% coverage for domain layer)
+- [x] Follows Clean Architecture patterns
+- [x] Implements all specs from IMPLEMENTATION-SPECS.md
+- [x] No TypeScript errors
+- [x] Properly emits domain events
 
 ---
 

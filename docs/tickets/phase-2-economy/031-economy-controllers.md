@@ -6,7 +6,7 @@
 **Depends On:** #028, #029
 **Estimated Time:** 4h
 **Agent:** Economy Agent
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ---
 
@@ -26,12 +26,12 @@ Implement REST API controllers for economy endpoints.
 
 ## ✅ Deliverables
 
-- [ ] WalletController (get balance, history)
-- [ ] ShopController (list items, purchase)
-- [ ] LivesController (get status)
-- [ ] DTOs with validation
-- [ ] OpenAPI documentation
-- [ ] Integration tests
+- [x] WalletController (get balance, history)
+- [x] ShopController (list items, purchase)
+- [x] LivesController (get status)
+- [x] DTOs with validation
+- [x] OpenAPI documentation
+- [x] Integration tests
 
 ---
 
@@ -47,12 +47,12 @@ apps/backend/src/modules/economy/presentation/controllers/__tests__/*.spec.ts
 
 ## 🧪 Acceptance Criteria
 
-- [ ] All deliverables completed
-- [ ] Tests pass (>90% coverage for domain layer)
-- [ ] Follows Clean Architecture patterns
-- [ ] Implements all specs from IMPLEMENTATION-SPECS.md
-- [ ] No TypeScript errors
-- [ ] Properly emits domain events
+- [x] All deliverables completed
+- [x] Tests pass (>90% coverage for domain layer)
+- [x] Follows Clean Architecture patterns
+- [x] Implements all specs from IMPLEMENTATION-SPECS.md
+- [x] No TypeScript errors
+- [x] Properly emits domain events
 
 ---
 

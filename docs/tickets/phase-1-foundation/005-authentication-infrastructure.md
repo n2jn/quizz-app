@@ -6,7 +6,7 @@
 **Depends On:** #004
 **Estimated Time:** 4h
 **Agent:** Foundation Agent
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ---
 
@@ -26,14 +26,14 @@ Setup JWT authentication infrastructure, guards, and decorators.
 
 ## ✅ Deliverables
 
-- [ ] JWT Strategy (Passport)
-- [ ] Refresh Token Strategy
-- [ ] JwtAuthGuard
-- [ ] RolesGuard
-- [ ] CurrentUser decorator
-- [ ] Roles decorator
-- [ ] Rate Limit Guard (Redis-based)
-- [ ] Password Service (bcrypt hashing)
+- [x] JWT Strategy (Passport)
+- [x] Refresh Token Strategy
+- [x] JwtAuthGuard
+- [x] RolesGuard
+- [x] CurrentUser decorator
+- [x] Roles decorator
+- [x] Rate Limit Guard (Redis-based)
+- [x] Password Service (bcrypt hashing)
 
 ---
 
@@ -51,12 +51,12 @@ apps/backend/src/modules/identity/infrastructure/services/password.service.ts
 
 ## 🧪 Acceptance Criteria
 
-- [ ] All deliverables completed
-- [ ] Tests pass (>90% coverage for domain layer)
-- [ ] Follows Clean Architecture patterns
-- [ ] Implements all specs from IMPLEMENTATION-SPECS.md
-- [ ] No TypeScript errors
-- [ ] Properly emits domain events
+- [x] All deliverables completed
+- [x] Tests pass (>90% coverage for domain layer)
+- [x] Follows Clean Architecture patterns
+- [x] Implements all specs from IMPLEMENTATION-SPECS.md
+- [x] No TypeScript errors
+- [x] Properly emits domain events
 
 ---
 

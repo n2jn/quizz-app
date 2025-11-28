@@ -6,7 +6,7 @@
 **Depends On:** #045
 **Estimated Time:** 3h
 **Agent:** Leaderboard Agent
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ---
 
@@ -26,11 +26,11 @@ Implement leaderboard query handlers.
 
 ## ✅ Deliverables
 
-- [ ] GetGlobalLeaderboardQuery
-- [ ] GetWeeklyLeaderboardQuery
-- [ ] GetNearbyPlayersQuery
-- [ ] Query handlers with caching
-- [ ] Unit tests
+- [x] GetGlobalLeaderboardQuery
+- [x] GetWeeklyLeaderboardQuery
+- [x] GetNearbyPlayersQuery
+- [x] Query handlers with caching
+- [x] Unit tests
 
 ---
 
@@ -46,12 +46,12 @@ apps/backend/src/modules/leaderboard/application/queries/__tests__/*.spec.ts
 
 ## 🧪 Acceptance Criteria
 
-- [ ] All deliverables completed
-- [ ] Tests pass (>90% coverage for domain layer)
-- [ ] Follows Clean Architecture patterns
-- [ ] Implements all specs from IMPLEMENTATION-SPECS.md
-- [ ] No TypeScript errors
-- [ ] Properly emits domain events
+- [x] All deliverables completed
+- [x] Tests pass (>90% coverage for domain layer)
+- [x] Follows Clean Architecture patterns
+- [x] Implements all specs from IMPLEMENTATION-SPECS.md
+- [x] No TypeScript errors
+- [x] Properly emits domain events
 
 ---
 

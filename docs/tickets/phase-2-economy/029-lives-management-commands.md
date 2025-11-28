@@ -6,7 +6,7 @@
 **Depends On:** #027
 **Estimated Time:** 3h
 **Agent:** Economy Agent
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ---
 
@@ -26,11 +26,11 @@ Implement lives consumption and regeneration commands.
 
 ## ✅ Deliverables
 
-- [ ] ConsumeLifeCommand
-- [ ] ConsumeLifeHandler
-- [ ] RegenerateLivesCommand
-- [ ] RegenerateLivesHandler
-- [ ] Unit tests
+- [x] ConsumeLifeCommand
+- [x] ConsumeLifeHandler
+- [x] RegenerateLivesCommand
+- [x] RegenerateLivesHandler
+- [x] Unit tests
 
 ---
 
@@ -46,12 +46,12 @@ apps/backend/src/modules/economy/application/commands/__tests__/*.spec.ts
 
 ## 🧪 Acceptance Criteria
 
-- [ ] All deliverables completed
-- [ ] Tests pass (>90% coverage for domain layer)
-- [ ] Follows Clean Architecture patterns
-- [ ] Implements all specs from IMPLEMENTATION-SPECS.md
-- [ ] No TypeScript errors
-- [ ] Properly emits domain events
+- [x] All deliverables completed
+- [x] Tests pass (>90% coverage for domain layer)
+- [x] Follows Clean Architecture patterns
+- [x] Implements all specs from IMPLEMENTATION-SPECS.md
+- [x] No TypeScript errors
+- [x] Properly emits domain events
 
 ---
 
