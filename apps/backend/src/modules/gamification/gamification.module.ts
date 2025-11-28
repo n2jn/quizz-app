@@ -11,7 +11,15 @@ import { GetProgressHandler } from './application/queries/get-progress.handler';
 // Repositories
 import { PlayerProgressRepository } from './infrastructure/repositories/player-progress.repository';
 
+// Event Handlers
+import { UserRegisteredGamificationHandler } from './application/event-handlers/user-registered.handler';
+import { QuizSessionCompletedGamificationHandler } from './application/event-handlers/quiz-session-completed.handler';
+
 const QueryHandlers = [GetProgressHandler];
+const EventHandlers = [
+  UserRegisteredGamificationHandler,
+  QuizSessionCompletedGamificationHandler,
+];
 
 const Repositories = [
   {
@@ -38,7 +46,7 @@ const Repositories = [
 @Module({
   imports: [CqrsModule, SharedModule],
   controllers: [GamificationController],
-  providers: [...QueryHandlers, ...Repositories],
+  providers: [...QueryHandlers, ...EventHandlers, ...Repositories],
   exports: [],
 })
 export class GamificationModule {}

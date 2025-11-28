@@ -11,7 +11,15 @@ import { GetLeaderboardHandler } from './application/queries/get-leaderboard.han
 // Repositories
 import { PlayerRankingRepository } from './infrastructure/repositories/player-ranking.repository';
 
+// Event Handlers
+import { UserRegisteredLeaderboardHandler } from './application/event-handlers/user-registered.handler';
+import { QuizSessionCompletedLeaderboardHandler } from './application/event-handlers/quiz-session-completed.handler';
+
 const QueryHandlers = [GetLeaderboardHandler];
+const EventHandlers = [
+  UserRegisteredLeaderboardHandler,
+  QuizSessionCompletedLeaderboardHandler,
+];
 
 const Repositories = [
   {
@@ -34,7 +42,7 @@ const Repositories = [
 @Module({
   imports: [CqrsModule, SharedModule],
   controllers: [LeaderboardController],
-  providers: [...QueryHandlers, ...Repositories],
+  providers: [...QueryHandlers, ...EventHandlers, ...Repositories],
   exports: [],
 })
 export class LeaderboardModule {}

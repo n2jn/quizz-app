@@ -16,8 +16,20 @@ import { GetLivesHandler } from './application/queries/get-lives.handler';
 import { WalletRepository } from './infrastructure/repositories/wallet.repository';
 import { LivesRepository } from './infrastructure/repositories/lives.repository';
 
+// Event Handlers
+import { UserRegisteredEconomyHandler } from './application/event-handlers/user-registered.handler';
+import { QuizSessionCompletedEconomyHandler } from './application/event-handlers/quiz-session-completed.handler';
+import { QuizSessionStartedEconomyHandler } from './application/event-handlers/quiz-session-started.handler';
+import { LevelUpEconomyHandler } from './application/event-handlers/level-up.handler';
+
 const CommandHandlers = [PurchaseItemHandler];
 const QueryHandlers = [GetWalletHandler, GetLivesHandler];
+const EventHandlers = [
+  UserRegisteredEconomyHandler,
+  QuizSessionCompletedEconomyHandler,
+  QuizSessionStartedEconomyHandler,
+  LevelUpEconomyHandler,
+];
 
 const Repositories = [
   {
@@ -54,7 +66,7 @@ const Repositories = [
 @Module({
   imports: [CqrsModule, SharedModule],
   controllers: [EconomyController],
-  providers: [...CommandHandlers, ...QueryHandlers, ...Repositories],
+  providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers, ...Repositories],
   exports: [],
 })
 export class EconomyModule {}
