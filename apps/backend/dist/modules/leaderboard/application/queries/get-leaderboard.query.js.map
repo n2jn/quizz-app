@@ -1,0 +1,1 @@
+{"version":3,"file":"get-leaderboard.query.js","sourceRoot":"","sources":["../../../../../src/modules/leaderboard/application/queries/get-leaderboard.query.ts"],"names":[],"mappings":";;;AAAA,MAAa,mBAAmB;IAC9B,YACkB,IAAyB,EACzB,QAAgB,GAAG;QADnB,SAAI,GAAJ,IAAI,CAAqB;QACzB,UAAK,GAAL,KAAK,CAAc;IAClC,CAAC;CACL;AALD,kDAKC"}

@@ -6,11 +6,11 @@ export class CreateQuestionAnswerDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
-  text: string;
+  text!: string;
 
   @ApiProperty({ example: true, description: 'Whether this is the correct answer' })
   @IsBoolean()
-  isCorrect: boolean;
+  isCorrect!: boolean;
 }
 
 export class CreateQuestionDto {
@@ -19,7 +19,7 @@ export class CreateQuestionDto {
   @IsNotEmpty()
   @MinLength(10)
   @MaxLength(1000)
-  text: string;
+  text!: string;
 
   @ApiProperty({
     example: 'Paris is the capital and most populous city of France.',
@@ -29,17 +29,17 @@ export class CreateQuestionDto {
   @IsNotEmpty()
   @MinLength(20)
   @MaxLength(2000)
-  explanation: string;
+  explanation!: string;
 
   @ApiProperty({ example: 'cat-geography-uuid', description: 'Category ID' })
   @IsString()
   @IsNotEmpty()
-  categoryId: string;
+  categoryId!: string;
 
   @ApiProperty({ example: 'diff-apprenti-uuid', description: 'Difficulty ID' })
   @IsString()
   @IsNotEmpty()
-  difficultyId: string;
+  difficultyId!: string;
 
   @ApiProperty({
     type: [CreateQuestionAnswerDto],
@@ -48,7 +48,7 @@ export class CreateQuestionDto {
   @IsArray()
   @ArrayMinSize(2)
   @ArrayMaxSize(6)
-  answers: CreateQuestionAnswerDto[];
+  answers!: CreateQuestionAnswerDto[];
 
   @ApiProperty({
     example: 'https://example.com/image.jpg',

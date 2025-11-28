@@ -5,65 +5,65 @@ export class PurchaseItemDto {
   @ApiProperty({ example: 'item-uuid', description: 'Shop item ID to purchase' })
   @IsString()
   @IsNotEmpty()
-  itemId: string;
+  itemId!: string;
 }
 
 export class PurchaseItemResponseDto {
   @ApiProperty({ example: 'item-uuid', description: 'Purchased item ID' })
-  itemId: string;
+  itemId!: string;
 
   @ApiProperty({ example: 'Extra Life', description: 'Item name' })
-  itemName: string;
+  itemName!: string;
 
   @ApiProperty({ example: 100, description: 'Price paid' })
-  price: number;
+  price!: number;
 
   @ApiProperty({ example: 450, description: 'Balance after purchase' })
-  balanceAfter: number;
+  balanceAfter!: number;
 }
 
 export class WalletResponseDto {
   @ApiProperty({ example: 550, description: 'Current balance' })
-  balance: number;
+  balance!: number;
 
   @ApiProperty({ example: 1200, description: 'Total coins earned' })
-  lifetimeEarned: number;
+  lifetimeEarned!: number;
 
   @ApiProperty({ example: 650, description: 'Total coins spent' })
-  lifetimeSpent: number;
+  lifetimeSpent!: number;
 }
 
 export class LivesResponseDto {
   @ApiProperty({ example: 3, description: 'Current lives' })
-  currentLives: number;
+  currentLives!: number;
 
   @ApiProperty({ example: 5, description: 'Maximum lives' })
-  maxLives: number;
+  maxLives!: number;
 
   @ApiProperty({
     example: '2024-01-01T12:00:00Z',
     description: 'Last regeneration time',
     nullable: true,
   })
-  lastRegenAt: Date | null;
+  lastRegenAt!: Date | null;
 }
 
 export class ShopItemDto {
   @ApiProperty({ example: 'item-uuid', description: 'Item ID' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'LIFE', description: 'Item type' })
-  type: string;
+  type!: string;
 
   @ApiProperty({ example: 'Extra Life', description: 'Item name' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'Restore one life to your health bar', description: 'Item description' })
-  description: string;
+  description!: string;
 
   @ApiProperty({ example: 100, description: 'Price in coins' })
-  price: number;
+  price!: number;
 
   @ApiProperty({ example: true, description: 'Whether item is available' })
-  available: boolean;
+  available!: boolean;
 }

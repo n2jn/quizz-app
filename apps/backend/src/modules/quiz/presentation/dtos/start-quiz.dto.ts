@@ -5,7 +5,7 @@ export class StartQuizDto {
   @ApiProperty({ example: 'diff-apprenti-uuid', description: 'Difficulty level ID' })
   @IsString()
   @IsNotEmpty()
-  difficultyId: string;
+  difficultyId!: string;
 
   @ApiProperty({
     example: 'cat-geography-uuid',
