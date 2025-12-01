@@ -67,6 +67,7 @@ export class UserRepository implements IUserRepository {
         id: user.id,
         email: user.getEmail().value,
         username: user.getUsername().value,
+        name: user.getName(),
         password: user.getPasswordHash(),
         role: user.getRole(),
         createdAt: user.getCreatedAt(),
@@ -75,6 +76,7 @@ export class UserRepository implements IUserRepository {
       update: {
         email: user.getEmail().value,
         username: user.getUsername().value,
+        name: user.getName(),
         password: user.getPasswordHash(),
         role: user.getRole(),
         updatedAt: user.getUpdatedAt(),
@@ -93,6 +95,7 @@ export class UserRepository implements IUserRepository {
       id: userModel.id,
       email: Email.create(userModel.email),
       username: Username.create(userModel.username),
+      name: userModel.name,
       passwordHash: userModel.password,
       role: userModel.role as UserRole,
       createdAt: userModel.createdAt,

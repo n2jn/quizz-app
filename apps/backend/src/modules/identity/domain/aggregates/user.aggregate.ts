@@ -3,16 +3,19 @@ import { Email } from '../value-objects/email.vo';
 import { Username } from '../value-objects/username.vo';
 import { UserRegisteredEvent } from '../events/user-registered.event';
 
-export enum UserRole {
-  PLAYER = 'PLAYER',
-  ADMIN = 'ADMIN',
-  SUPER_ADMIN = 'SUPER_ADMIN',
-}
+export const UserRole = {
+  PLAYER: 'PLAYER',
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN',
+} as const
+
+export type UserRole = keyof typeof UserRole
 
 export interface UserProps {
   id: string;
   email: Email;
   username: Username;
+  name: string;
   passwordHash: string;
   role: UserRole;
   createdAt: Date;
@@ -28,6 +31,7 @@ export interface UserProps {
 export class User extends AggregateRoot<string> {
   private email: Email;
   private username: Username;
+  private name: string;
   private passwordHash: string;
   private role: UserRole;
   private readonly createdAt: Date;
@@ -37,6 +41,7 @@ export class User extends AggregateRoot<string> {
     super(props.id);
     this.email = props.email;
     this.username = props.username;
+    this.name = props.name;
     this.passwordHash = props.passwordHash;
     this.role = props.role;
     this.createdAt = props.createdAt;
@@ -50,12 +55,14 @@ export class User extends AggregateRoot<string> {
     id: string,
     email: Email,
     username: Username,
+    name: string,
     passwordHash: string,
   ): User {
     const user = new User({
       id,
       email,
       username,
+      name,
       passwordHash,
       role: UserRole.PLAYER,
       createdAt: new Date(),
@@ -88,6 +95,10 @@ export class User extends AggregateRoot<string> {
 
   getUsername(): Username {
     return this.username;
+  }
+
+  getName(): string {
+    return this.name;
   }
 
   getPasswordHash(): string {

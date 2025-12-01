@@ -61,6 +61,7 @@ let UserRepository = class UserRepository {
                 id: user.id,
                 email: user.getEmail().value,
                 username: user.getUsername().value,
+                name: user.getName(),
                 password: user.getPasswordHash(),
                 role: user.getRole(),
                 createdAt: user.getCreatedAt(),
@@ -69,6 +70,7 @@ let UserRepository = class UserRepository {
             update: {
                 email: user.getEmail().value,
                 username: user.getUsername().value,
+                name: user.getName(),
                 password: user.getPasswordHash(),
                 role: user.getRole(),
                 updatedAt: user.getUpdatedAt(),
@@ -85,6 +87,7 @@ let UserRepository = class UserRepository {
             id: userModel.id,
             email: email_vo_1.Email.create(userModel.email),
             username: username_vo_1.Username.create(userModel.username),
+            name: userModel.name,
             passwordHash: userModel.password,
             role: userModel.role,
             createdAt: userModel.createdAt,

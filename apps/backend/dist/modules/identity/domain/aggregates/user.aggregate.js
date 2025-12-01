@@ -3,29 +3,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.UserRole = void 0;
 const base_1 = require("../../../../shared/domain/base");
 const user_registered_event_1 = require("../events/user-registered.event");
-var UserRole;
-(function (UserRole) {
-    UserRole["PLAYER"] = "PLAYER";
-    UserRole["ADMIN"] = "ADMIN";
-    UserRole["SUPER_ADMIN"] = "SUPER_ADMIN";
-})(UserRole || (exports.UserRole = UserRole = {}));
+exports.UserRole = {
+    PLAYER: 'PLAYER',
+    ADMIN: 'ADMIN',
+    SUPER_ADMIN: 'SUPER_ADMIN',
+};
 class User extends base_1.AggregateRoot {
     constructor(props) {
         super(props.id);
         this.email = props.email;
         this.username = props.username;
+        this.name = props.name;
         this.passwordHash = props.passwordHash;
         this.role = props.role;
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;
     }
-    static create(id, email, username, passwordHash) {
+    static create(id, email, username, name, passwordHash) {
         const user = new User({
             id,
             email,
             username,
+            name,
             passwordHash,
-            role: UserRole.PLAYER,
+            role: exports.UserRole.PLAYER,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
@@ -45,6 +46,9 @@ class User extends base_1.AggregateRoot {
     getUsername() {
         return this.username;
     }
+    getName() {
+        return this.name;
+    }
     getPasswordHash() {
         return this.passwordHash;
     }
@@ -58,10 +62,10 @@ class User extends base_1.AggregateRoot {
         return this.updatedAt;
     }
     isAdmin() {
-        return this.role === UserRole.ADMIN || this.role === UserRole.SUPER_ADMIN;
+        return this.role === exports.UserRole.ADMIN || this.role === exports.UserRole.SUPER_ADMIN;
     }
     isSuperAdmin() {
-        return this.role === UserRole.SUPER_ADMIN;
+        return this.role === exports.UserRole.SUPER_ADMIN;
     }
     updatePassword(newPasswordHash) {
         this.passwordHash = newPasswordHash;

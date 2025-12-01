@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { User } from '@prisma/client';
+import { User } from '@generated/prisma/client';
 export declare class UsersService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -7,6 +7,7 @@ export declare class UsersService {
     findById(id: string): Promise<User | null>;
     create(data: {
         email: string;
+        username: string;
         name: string;
         password: string;
     }): Promise<User>;

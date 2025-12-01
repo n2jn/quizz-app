@@ -20,6 +20,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@quizz-app/shared-types": ["../../packages/shared-types/src"],
+      "@generated/*": ["./generated/*"],
       "@modules/*": ["./modules/*"],
       "@shared/*": ["./shared/*"],
       "@config/*": ["./config/*"]

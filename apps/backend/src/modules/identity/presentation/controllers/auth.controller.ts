@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UnauthorizedException, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, HttpCode, HttpStatus, Inject } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CommandBus } from '@nestjs/cqrs';
 import { RegisterDto } from '../dtos/register.dto';
@@ -23,7 +23,7 @@ export class AuthController {
     private readonly commandBus: CommandBus,
     private readonly passwordService: PasswordService,
     private readonly jwtTokenService: JwtTokenService,
-    private readonly userRepository: IUserRepository,
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
   ) {}
 
   @Post('register')
@@ -34,7 +34,7 @@ export class AuthController {
     const hashedPassword = await this.passwordService.hash(dto.password);
 
     const result = await this.commandBus.execute(
-      new RegisterUserCommand(dto.email, dto.username, hashedPassword),
+      new RegisterUserCommand(dto.email, dto.username, dto.username, hashedPassword),
     );
 
     // Generate tokens

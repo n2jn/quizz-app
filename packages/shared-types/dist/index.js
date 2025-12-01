@@ -14,8 +14,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Auth DTOs
 __exportStar(require("./auth/login.dto"), exports);
 __exportStar(require("./auth/register.dto"), exports);
 __exportStar(require("./auth/auth-response.dto"), exports);
+// User DTOs
 __exportStar(require("./user/user.dto"), exports);
-//# sourceMappingURL=index.js.map

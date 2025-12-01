@@ -1,4 +1,5 @@
 import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto, AuthResponseDto, UserDto } from '@quizz-app/shared-types';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -19,10 +20,11 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getProfile(@Request() req): Promise<Omit<UserDto, 'createdAt' | 'updatedAt'>> {
+  async getProfile(@Request() req: ExpressRequest & { user: { id: string; email: string; username: string; name: string } }): Promise<Omit<UserDto, 'createdAt' | 'updatedAt'>> {
     return {
       id: req.user.id,
       email: req.user.email,
+      username: req.user.username,
       name: req.user.name,
     };
   }

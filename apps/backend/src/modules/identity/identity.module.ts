@@ -26,10 +26,10 @@ const Repositories = [
     provide: 'IUserRepository',
     useClass: UserRepository,
   },
-  {
-    provide: IUserRepository,
-    useClass: UserRepository,
-  },
+  // {
+  //   provide: IUserRepository,
+  //   useClass: UserRepository,
+  // },
 ];
 
 const Services = [PasswordService, JwtTokenService];

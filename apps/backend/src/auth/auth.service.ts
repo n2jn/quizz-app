@@ -46,6 +46,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        username: user.username,
         name: user.name,
       },
     };
@@ -62,6 +63,7 @@ export class AuthService {
 
     const user = await this.usersService.create({
       email: registerDto.email,
+      username: registerDto.username,
       name: registerDto.name,
       password: hashedPassword,
     });
@@ -77,6 +79,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        username: user.username,
         name: user.name,
       },
     };

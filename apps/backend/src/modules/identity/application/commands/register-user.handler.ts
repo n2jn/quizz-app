@@ -46,7 +46,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand,
     // Password will be hashed in infrastructure layer (PasswordService)
     // For now, we expect it to be pre-hashed before reaching this handler
     const userId = uuidv4();
-    const user = User.create(userId, email, username, command.password);
+    const user = User.create(userId, email, username, command.name, command.password);
 
     // Save user
     await this.userRepository.save(user);

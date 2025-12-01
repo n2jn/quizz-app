@@ -35,7 +35,7 @@ let RegisterUserHandler = class RegisterUserHandler {
             throw new exceptions_1.EntityAlreadyExistsException('User', command.email);
         }
         const userId = (0, uuid_1.v4)();
-        const user = user_aggregate_1.User.create(userId, email, username, command.password);
+        const user = user_aggregate_1.User.create(userId, email, username, command.name, command.password);
         await this.userRepository.save(user);
         await this.eventBus.publishAll([...user.domainEvents]);
         user.clearEvents();

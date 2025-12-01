@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginDto = void 0;
 const class_validator_1 = require("class-validator");
 class LoginDto {
+    email;
+    password;
 }
 exports.LoginDto = LoginDto;
 __decorate([
@@ -23,4 +25,3 @@ __decorate([
     (0, class_validator_1.MinLength)(6),
     __metadata("design:type", String)
 ], LoginDto.prototype, "password", void 0);
-//# sourceMappingURL=login.dto.js.map

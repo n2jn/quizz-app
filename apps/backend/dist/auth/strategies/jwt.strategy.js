@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtStrategy = void 0;
 const passport_jwt_1 = require("passport-jwt");
@@ -22,11 +25,13 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
             ignoreExpiration: false,
             secretOrKey: configService.get('JWT_SECRET'),
         });
-        this.configService = configService;
         this.usersService = usersService;
     }
     async validate(payload) {
         const user = await this.usersService.findById(payload.sub);
+        if (!user) {
+            return null;
+        }
         const { password, ...result } = user;
         return result;
     }
@@ -34,6 +39,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
 exports.JwtStrategy = JwtStrategy;
 exports.JwtStrategy = JwtStrategy = __decorate([
     (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)(config_1.ConfigService)),
     __metadata("design:paramtypes", [config_1.ConfigService,
         users_service_1.UsersService])
 ], JwtStrategy);

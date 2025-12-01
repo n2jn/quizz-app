@@ -41,7 +41,7 @@ describe('RegisterUserHandler', () => {
         eventBus = module.get(event_bus_service_1.EventBusService);
     });
     describe('execute', () => {
-        const validCommand = new register_user_command_1.RegisterUserCommand('user@example.com', 'john_doe', '$2b$12$hashedpassword');
+        const validCommand = new register_user_command_1.RegisterUserCommand('user@example.com', 'john_doe', 'John Doe', '$2b$12$hashedpassword');
         it('should register a new user successfully', async () => {
             userRepository.exists.mockResolvedValue(false);
             userRepository.save.mockResolvedValue(undefined);
@@ -79,15 +79,15 @@ describe('RegisterUserHandler', () => {
             expect(publishedEvents[0].eventName).toBe('user.registered');
         });
         it('should throw error for invalid email', async () => {
-            const invalidCommand = new register_user_command_1.RegisterUserCommand('invalid-email', 'john_doe', '$2b$12$hashedpassword');
+            const invalidCommand = new register_user_command_1.RegisterUserCommand('invalid-email', 'john_doe', 'John Doe', '$2b$12$hashedpassword');
             await expect(handler.execute(invalidCommand)).rejects.toThrow();
         });
         it('should throw error for invalid username', async () => {
-            const invalidCommand = new register_user_command_1.RegisterUserCommand('user@example.com', 'ab', '$2b$12$hashedpassword');
+            const invalidCommand = new register_user_command_1.RegisterUserCommand('user@example.com', 'ab', 'John Doe', '$2b$12$hashedpassword');
             await expect(handler.execute(invalidCommand)).rejects.toThrow();
         });
         it('should normalize email to lowercase', async () => {
-            const command = new register_user_command_1.RegisterUserCommand('User@Example.COM', 'john_doe', '$2b$12$hashedpassword');
+            const command = new register_user_command_1.RegisterUserCommand('User@Example.COM', 'john_doe', 'John Doe', '$2b$12$hashedpassword');
             userRepository.exists.mockResolvedValue(false);
             userRepository.save.mockResolvedValue(undefined);
             const result = await handler.execute(command);

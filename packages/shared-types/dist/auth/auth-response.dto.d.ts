@@ -4,6 +4,7 @@ export declare class AuthResponseDto {
     user: {
         id: string;
         email: string;
+        username: string;
         name: string;
     };
 }

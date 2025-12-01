@@ -48,6 +48,7 @@ let AuthService = class AuthService {
             user: {
                 id: user.id,
                 email: user.email,
+                username: user.username,
                 name: user.name,
             },
         };
@@ -60,6 +61,7 @@ let AuthService = class AuthService {
         const hashedPassword = await bcrypt.hash(registerDto.password, 10);
         const user = await this.usersService.create({
             email: registerDto.email,
+            username: registerDto.username,
             name: registerDto.name,
             password: hashedPassword,
         });
@@ -73,6 +75,7 @@ let AuthService = class AuthService {
             user: {
                 id: user.id,
                 email: user.email,
+                username: user.username,
                 name: user.name,
             },
         };

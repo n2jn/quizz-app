@@ -24,10 +24,6 @@ const Repositories = [
         provide: 'IUserRepository',
         useClass: user_repository_1.UserRepository,
     },
-    {
-        provide: user_repository_interface_1.IUserRepository,
-        useClass: user_repository_1.UserRepository,
-    },
 ];
 const Services = [password_service_1.PasswordService, jwt_service_1.JwtTokenService];
 const Strategies = [jwt_strategy_1.JwtStrategy];

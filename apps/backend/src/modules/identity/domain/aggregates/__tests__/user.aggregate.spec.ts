@@ -6,11 +6,12 @@ import { UserRegisteredEvent } from '../../events/user-registered.event';
 describe('User Aggregate', () => {
   const validEmail = Email.create('user@example.com');
   const validUsername = Username.create('john_doe');
+  const validName = 'John Doe';
   const validPasswordHash = '$2b$12$hashedpassword';
 
   describe('create', () => {
     it('should create a new user with valid data', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
 
       expect(user.id).toBe('user-id-123');
       expect(user.getEmail()).toBe(validEmail);
@@ -20,13 +21,13 @@ describe('User Aggregate', () => {
     });
 
     it('should set role to PLAYER by default', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       expect(user.getRole()).toBe(UserRole.PLAYER);
     });
 
     it('should set createdAt and updatedAt timestamps', () => {
       const beforeCreate = new Date();
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       const afterCreate = new Date();
 
       expect(user.getCreatedAt()).toBeInstanceOf(Date);
@@ -36,7 +37,7 @@ describe('User Aggregate', () => {
     });
 
     it('should emit UserRegisteredEvent', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
 
       expect(user.domainEvents).toHaveLength(1);
       expect(user.domainEvents[0]).toBeInstanceOf(UserRegisteredEvent);
@@ -57,6 +58,7 @@ describe('User Aggregate', () => {
         id: 'user-id-123',
         email: validEmail,
         username: validUsername,
+        name: validName,
         passwordHash: validPasswordHash,
         role: UserRole.ADMIN,
         createdAt,
@@ -77,6 +79,7 @@ describe('User Aggregate', () => {
         id: 'user-id-123',
         email: validEmail,
         username: validUsername,
+        name: validName,
         passwordHash: validPasswordHash,
         role: UserRole.PLAYER,
         createdAt: new Date(),
@@ -93,6 +96,7 @@ describe('User Aggregate', () => {
         id: 'user-id-123',
         email: validEmail,
         username: validUsername,
+        name: validName,
         passwordHash: validPasswordHash,
         role: UserRole.ADMIN,
         createdAt: new Date(),
@@ -107,6 +111,7 @@ describe('User Aggregate', () => {
         id: 'user-id-123',
         email: validEmail,
         username: validUsername,
+        name: validName,
         passwordHash: validPasswordHash,
         role: UserRole.SUPER_ADMIN,
         createdAt: new Date(),
@@ -117,7 +122,7 @@ describe('User Aggregate', () => {
     });
 
     it('should return false for PLAYER role', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       expect(user.isAdmin()).toBe(false);
     });
   });
@@ -128,6 +133,7 @@ describe('User Aggregate', () => {
         id: 'user-id-123',
         email: validEmail,
         username: validUsername,
+        name: validName,
         passwordHash: validPasswordHash,
         role: UserRole.SUPER_ADMIN,
         createdAt: new Date(),
@@ -142,6 +148,7 @@ describe('User Aggregate', () => {
         id: 'user-id-123',
         email: validEmail,
         username: validUsername,
+        name: validName,
         passwordHash: validPasswordHash,
         role: UserRole.ADMIN,
         createdAt: new Date(),
@@ -152,14 +159,14 @@ describe('User Aggregate', () => {
     });
 
     it('should return false for PLAYER role', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       expect(user.isSuperAdmin()).toBe(false);
     });
   });
 
   describe('updatePassword', () => {
     it('should update password hash', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       const newPasswordHash = '$2b$12$newhashedpassword';
 
       user.updatePassword(newPasswordHash);
@@ -168,7 +175,7 @@ describe('User Aggregate', () => {
     });
 
     it('should update updatedAt timestamp', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       const originalUpdatedAt = user.getUpdatedAt();
 
       // Wait a bit to ensure timestamp changes
@@ -181,7 +188,7 @@ describe('User Aggregate', () => {
 
   describe('clearEvents', () => {
     it('should clear all domain events', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
 
       expect(user.domainEvents).toHaveLength(1);
 
@@ -193,11 +200,12 @@ describe('User Aggregate', () => {
 
   describe('equals', () => {
     it('should return true for same user ID', () => {
-      const user1 = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user1 = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       const user2 = User.fromPersistence({
         id: 'user-id-123',
         email: Email.create('other@example.com'),
         username: Username.create('other_user'),
+        name: 'Other User',
         passwordHash: 'different',
         role: UserRole.ADMIN,
         createdAt: new Date(),
@@ -208,19 +216,19 @@ describe('User Aggregate', () => {
     });
 
     it('should return false for different user IDs', () => {
-      const user1 = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
-      const user2 = User.create('user-id-456', validEmail, validUsername, validPasswordHash);
+      const user1 = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
+      const user2 = User.create('user-id-456', validEmail, validUsername, validName, validPasswordHash);
 
       expect(user1.equals(user2)).toBe(false);
     });
 
     it('should return false when comparing to null', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       expect(user.equals(null as any)).toBe(false);
     });
 
     it('should return false when comparing to undefined', () => {
-      const user = User.create('user-id-123', validEmail, validUsername, validPasswordHash);
+      const user = User.create('user-id-123', validEmail, validUsername, validName, validPasswordHash);
       expect(user.equals(undefined as any)).toBe(false);
     });
   });

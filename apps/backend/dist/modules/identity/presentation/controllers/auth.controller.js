@@ -33,7 +33,7 @@ let AuthController = class AuthController {
     }
     async register(dto) {
         const hashedPassword = await this.passwordService.hash(dto.password);
-        const result = await this.commandBus.execute(new register_user_command_1.RegisterUserCommand(dto.email, dto.username, hashedPassword));
+        const result = await this.commandBus.execute(new register_user_command_1.RegisterUserCommand(dto.email, dto.username, dto.username, hashedPassword));
         const tokens = await this.jwtTokenService.generateTokenPair(result.userId, result.email, result.username, 'PLAYER');
         return {
             accessToken: tokens.accessToken,
@@ -123,6 +123,7 @@ __decorate([
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)('Auth'),
     (0, common_1.Controller)('auth'),
+    __param(3, (0, common_1.Inject)('IUserRepository')),
     __metadata("design:paramtypes", [cqrs_1.CommandBus,
         password_service_1.PasswordService,
         jwt_service_1.JwtTokenService, Object])

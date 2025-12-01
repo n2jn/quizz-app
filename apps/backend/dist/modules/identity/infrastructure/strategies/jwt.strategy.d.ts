@@ -9,7 +9,7 @@ export declare class JwtStrategy extends JwtStrategy_base {
         userId: string;
         email: string;
         username: string;
-        role: import("../../domain/aggregates/user.aggregate").UserRole;
+        role: "PLAYER" | "ADMIN" | "SUPER_ADMIN";
     }>;
 }
 export {};

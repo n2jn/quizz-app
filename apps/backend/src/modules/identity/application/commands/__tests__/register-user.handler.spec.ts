@@ -51,6 +51,7 @@ describe('RegisterUserHandler', () => {
     const validCommand = new RegisterUserCommand(
       'user@example.com',
       'john_doe',
+      'John Doe',
       '$2b$12$hashedpassword',
     );
 
@@ -111,6 +112,7 @@ describe('RegisterUserHandler', () => {
       const invalidCommand = new RegisterUserCommand(
         'invalid-email',
         'john_doe',
+        'John Doe',
         '$2b$12$hashedpassword',
       );
 
@@ -121,6 +123,7 @@ describe('RegisterUserHandler', () => {
       const invalidCommand = new RegisterUserCommand(
         'user@example.com',
         'ab', // too short
+        'John Doe',
         '$2b$12$hashedpassword',
       );
 
@@ -131,6 +134,7 @@ describe('RegisterUserHandler', () => {
       const command = new RegisterUserCommand(
         'User@Example.COM',
         'john_doe',
+        'John Doe',
         '$2b$12$hashedpassword',
       );
       userRepository.exists.mockResolvedValue(false);
