@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "b73bfb157979d366",
@@ -183,7 +184,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "a8c6bccfb4a4919b",
+  "active": "703694122b5a6e84",
   "lastOpenFiles": [
     "tickets/MASTER-TICKET-LIST.md.tmp.42279.1764327638590",
     "tickets/MASTER-TICKET-LIST.md.tmp.42279.1764327626976",
