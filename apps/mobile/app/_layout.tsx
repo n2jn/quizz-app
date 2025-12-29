@@ -1,35 +1,32 @@
-import { Stack } from "expo-router";
-import { QueryProvider } from "../src/providers/QueryProvider";
+// All import statements remain the same except you need to import `useSession` from your `ctx.tsx` file.
 
-export default function RootLayout() {
+import { SessionProvider, useSession } from "@/src/providers/AuthProvider/AuthProvider";
+import { Stack } from "expo-router";
+import { SplashScreenController } from "./splash";
+
+
+
+export default function Root() {
+  // Set up the auth context and render your layout inside of it.
   return (
-    <QueryProvider>
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={{ title: "Home" }}
-        />
-        <Stack.Screen
-          name="examples/login"
-          options={{ title: "Login Example" }}
-        />
-        <Stack.Screen
-          name="examples/quiz"
-          options={{ title: "Quiz Example" }}
-        />
-        <Stack.Screen
-          name="examples/wallet"
-          options={{ title: "Wallet & Shop" }}
-        />
-        <Stack.Screen
-          name="examples/profile"
-          options={{ title: "Profile Example" }}
-        />
-        <Stack.Screen
-          name="examples/leaderboard"
-          options={{ title: "Leaderboard" }}
-        />
-      </Stack>
-    </QueryProvider>
+    <SessionProvider>
+      <SplashScreenController />
+      <RootNavigator />
+    </SessionProvider>
+  );
+}
+function RootNavigator() {
+  const { session } = useSession();
+
+  return (
+    <Stack>
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="private" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="sign-in" />
+      </Stack.Protected>
+    </Stack>
   );
 }
